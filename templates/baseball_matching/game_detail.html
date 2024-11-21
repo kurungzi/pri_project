@@ -1,0 +1,106 @@
+<!-- templates/baseball_matching/game_detail.html -->
+{% extends 'baseball_matching/base.html' %}
+
+{% block title %}{{ game.title }} 매치매칭 {% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>{{ game.title }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>날짜:</strong> {{ game.date }}</p>
+                <p><strong>시간:</strong> {{ game.time }}</p>
+                <p><strong>장소:</strong> {{ game.location }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>참가비:</strong> {{ game.participation_fee }}P</p>
+                <p><strong>상태:</strong> {{ game.get_status_display }}</p>
+            </div>
+        </div>
+        <p><strong>설명:</strong> {{ game.description }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 홈팀 포지션 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">홈팀</h3>
+            </div>
+            <div class="card-body">
+                {% for position in home_positions %}
+                    <div class="position-card mb-2 p-3 border rounded {% if position.is_filled %}bg-light{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ position.get_position_display }}</h5>
+                            {% if position.is_filled %}
+                                <div>
+                                    <span class="badge bg-secondary">마감</span>
+                                    <small class="ms-2">{{ position.player.user.username }}</small>
+                                    {% if position.player == user.userprofile %}
+                                        <form method="post" action="{% url 'baseball_matching:cancel_position' position.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger ms-2">
+                                                취소
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <form method="post" action="{% url 'baseball_matching:join_position' position.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        신청하기 ({{ game.participation_fee }}P)
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 원정팀 포지션 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">원정팀</h3>
+            </div>
+            <div class="card-body">
+                {% for position in away_positions %}
+                    <div class="position-card mb-2 p-3 border rounded {% if position.is_filled %}bg-light{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ position.get_position_display }}</h5>
+                            {% if position.is_filled %}
+                                <div>
+                                    <span class="badge bg-secondary">마감</span>
+                                    <small class="ms-2">{{ position.player.user.username }}</small>
+                                    {% if position.player == user.userprofile %}
+                                        <form method="post" action="{% url 'baseball_matching:cancel_position' position.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger ms-2">
+                                                취소
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <form method="post" action="{% url 'baseball_matching:join_position' position.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        신청하기 ({{ game.participation_fee }}P)
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

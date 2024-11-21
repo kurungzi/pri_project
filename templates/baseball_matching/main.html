@@ -1,0 +1,66 @@
+{% extends 'baseball_matching/base.html' %}
+
+{% block title %}매치매칭{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center my-5">
+        <h1 class="display-4 mb-4">매치매칭</h1>
+        <p class="lead mb-5">원하는 포지션으로 경기를 즐겨보세요!</p>
+    </div>
+
+    <div class="row justify-content-center g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 text-center hover-shadow">
+                <div class="card-body">
+                    <h3 class="card-title">경기 목록</h3>
+                    <p class="card-text">현재 모집 중인 경기들을 확인하고 원하는 포지션에 참가해보세요.</p>
+                    <a href="{% url 'baseball_matching:game_list' %}" class="btn btn-primary">경기 보러가기</a>
+                </div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="col-md-4">
+            <div class="card h-100 text-center hover-shadow">
+                <div class="card-body">
+                    <h3 class="card-title">경기 등록</h3>
+                    <p class="card-text">새로운 경기를 등록하고 팀원을 모집해보세요.</p>
+                    <a href="{% url 'baseball_matching:game_create' %}" class="btn btn-success">경기 등록하기</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 text-center hover-shadow">
+                <div class="card-body">
+                    <h3 class="card-title">내 포인트</h3>
+                    <p class="card-text">현재 보유 포인트: {{ user.userprofile.points }}P</p>
+                    <a href="{% url 'baseball_matching:charge_points' %}" class="btn btn-info">포인트 충전</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-md-4">
+            <div class="card h-100 text-center hover-shadow">
+                <div class="card-body">
+                    <h3 class="card-title">회원가입</h3>
+                    <p class="card-text">회원가입하고 경기에 참여해보세요.</p>
+                    <a href="{% url 'baseball_matching:register' %}" class="btn btn-success">회원가입</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

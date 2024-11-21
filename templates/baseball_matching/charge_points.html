@@ -1,0 +1,20 @@
+{% extends 'baseball_matching/base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>포인트 충전</h2>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">현재 보유 포인트: {{ user.userprofile.points }}P</h5>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="amount" class="form-label">충전할 금액</label>
+                <input type="number" class="form-control" id="amount" name="amount" min="10000" step="10000">
+            </div>
+            <button type="submit" class="btn btn-primary">충전하기</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
