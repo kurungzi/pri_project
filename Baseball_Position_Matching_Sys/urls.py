@@ -21,5 +21,7 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(template_name='baseball_matching/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='baseball_matching:game_list'), name='logout'),
     path('', include('baseball_matching.urls')),
+    path('accounts/', include('allauth.urls')),  # allauth URLs
+
 ]
 

@@ -1,10 +1,34 @@
+# baseball_matching/admin.py
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from .models import UserProfile, Game, Position, PointHistory
 
-#Django 관리자 인터페이스를 구성하는 파일
-#모델을 관리자 페이지에 등록하고 커스터마이징하는 역할
+# UserProfile Admin
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'points', 'phone_number', 'created_at')
+    search_fields = ('user__username', 'phone_number')
 
-admin.site.register(UserProfile)
-admin.site.register(Game)
-admin.site.register(Position)
-admin.site.register(PointHistory)
+# Game Admin
+class GameAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date', 'time', 'location', 'status', 'participation_fee')
+    list_filter = ('status', 'date')
+    search_fields = ('title', 'location')
+
+# Position Admin
+class PositionAdmin(admin.ModelAdmin):
+    list_display = ('game', 'team', 'position', 'player', 'is_filled')
+    list_filter = ('team', 'position', 'is_filled')
+    search_fields = ('game__title', 'player__user__username')
+
+# PointHistory Admin
+class PointHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'amount', 'transaction_type', 'created_at')
+    list_filter = ('transaction_type', 'created_at')
+    search_fields = ('user__user__username', 'description')
+
+# Register models
+admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(Game, GameAdmin)
+admin.site.register(Position, PositionAdmin)
+admin.site.register(PointHistory, PointHistoryAdmin)

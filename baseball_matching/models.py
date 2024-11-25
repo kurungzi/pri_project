@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # 데이터베이스 구조를 정의하는 파일
 # ORM을 통한 데이터베이스 조작의 기준
@@ -7,12 +9,18 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}의 프로필"
 
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    else:
+        instance.userprofile.save()
 
 class PointHistory(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
