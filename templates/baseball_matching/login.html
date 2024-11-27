@@ -1,5 +1,6 @@
 <!-- templates/baseball_matching/login.html -->
 {% extends 'baseball_matching/base.html' %}
+{% load socialaccount %}  <!-- 이 줄 추가 -->
 
 {% block title %}로그인{% endblock %}
 
@@ -8,9 +9,10 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h2>로그인</h2>
+                <h2 class="text-center">로그인</h2>
             </div>
             <div class="card-body">
+                <!-- 일반 로그인 폼 -->
                 <form method="post">
                     {% csrf_token %}
                     {% for field in form %}
@@ -21,20 +23,42 @@
                             <input type="{% if field.name == 'password' %}password{% else %}text{% endif %}" 
                                    name="{{ field.name }}" 
                                    class="form-control" 
-                                   id="{{ field.id_for_label }}"
-                                   {% if field.value %}value="{{ field.value }}"{% endif %}>
-                            {% if field.errors %}
-                                <div class="text-danger">
-                                    {{ field.errors }}
-                                </div>
-                            {% endif %}
+                                   id="{{ field.id_for_label }}">
                         </div>
                     {% endfor %}
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                    <a href="{% url 'baseball_matching:register' %}" class="btn btn-secondary">회원가입</a>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                    </div>
                 </form>
+
+                <!-- 소셜 로그인 버튼들 -->
+                <div class="mt-4">
+                    <div class="d-grid gap-2">
+                        <a href="{% provider_login_url 'kakao' %}" class="btn btn-warning">  <!-- 이 부분 수정 -->
+                            카카오톡으로 로그인
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p class="mb-0">아직 계정이 없으신가요? <a href="{% url 'baseball_matching:register' %}">회원가입</a></p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-warning {
+        background-color: #FEE500;
+        border-color: #FEE500;
+        color: #000000;
+    }
+
+    .btn-warning:hover {
+        background-color: #FDD835;
+        border-color: #FDD835;
+        color: #000000;
+    }
+</style>
 {% endblock %}

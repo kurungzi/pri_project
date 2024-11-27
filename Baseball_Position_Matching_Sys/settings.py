@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kv8332&(-k%q*)(p0h$hiaky4q9%k292#1)kmn%c(^1-1s$qr%'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-kv8332&(-k%q*)(p0h$hiaky4q9%k292#1)kmn%c(^1-1s$qr%')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'baseball_matching',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'Baseball_Position_Matching_Sys.urls'
@@ -101,6 +110,27 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'kakao': {
+        'APP': {
+            'client_id': os.getenv('3865e4af5cf8eace4712678533a3775b'),
+            'secret': os.getenv('ldtCiCj5B4M8ankJgBVEhBUNk5BKTreU'),
+            'key': ''
+        }
+    }
+}
+
+# allauth 설정
+LOGIN_REDIRECT_URL = 'baseball_matching:main'  # 로그인 후 리다이렉트할 URL
+ACCOUNT_LOGOUT_REDIRECT_URL = 'baseball_matching:main'  # 로그아웃 후 리다이렉트할 URL
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 불필요
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -125,5 +155,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'baseball_matching:game_list'  # 네임스페이스 포함
-LOGOUT_REDIRECT_URL = 'baseball_matching:game_list'  # 네임스페이스 포함
+LOGIN_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
+ACCOUNT_LOGOUT_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
