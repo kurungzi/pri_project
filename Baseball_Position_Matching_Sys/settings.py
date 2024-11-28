@@ -157,3 +157,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
 ACCOUNT_LOGOUT_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'

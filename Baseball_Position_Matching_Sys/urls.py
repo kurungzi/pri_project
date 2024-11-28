@@ -16,10 +16,22 @@ from django.contrib.auth import views as auth_views
 #     path('', include('baseball_matching.urls')),
 # ]
 
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     # allauth URLs
+#     path('accounts/', include('allauth.urls')),
+#     # 기존 로그인/로그아웃 URL
+#     path('accounts/login/', auth_views.LoginView.as_view(template_name='baseball_matching/login.html'), name='login'),
+#     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='baseball_matching:main'), name='logout'),
+#     # baseball_matching URLs
+#     path('', include('baseball_matching.urls')),
+# ]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='baseball_matching/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='baseball_matching:game_list'), name='logout'),
+    path('accounts/login/', auth_views.LoginView.as_view(
+        template_name='baseball_matching/login.html',  # 이 부분이 중요합니다
+    ), name='login'),
+    path('accounts/', include('allauth.urls')),
     path('', include('baseball_matching.urls')),
 ]
-
