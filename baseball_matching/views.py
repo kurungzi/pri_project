@@ -20,11 +20,9 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # UserProfile 생성
-            UserProfile.objects.create(user=user) #object = 데이터 베이스 저장
             login(request, user)
             messages.success(request, '회원가입이 완료되었습니다!')
-            return redirect('baseball_matching:game_list')
+            return redirect('baseball_matching:main')
     else:
         form = UserCreationForm()
     return render(request, 'baseball_matching/register.html', {'form': form})
@@ -208,21 +206,27 @@ def charge_points(request):
     if request.method == 'POST':
         amount = int(request.POST.get('amount', 0))
         if amount > 0:
-            user_profile = request.user.userprofile
-            user_profile.points += amount
-            user_profile.save()
+            # 트랜잭션 처리로 데이터 일관성 보장
+            with transaction.atomic():
+                # 사용자 프로필 업데이트
+                user_profile = request.user.userprofile
+                user_profile.points += amount
+                user_profile.save()
 
-            PointHistory.objects.create(
-                user=user_profile,
-                amount=amount,
-                transaction_type='CHARGE',
-                description='포인트 충전'
-            )
+                # 충전 내역 기록
+                PointHistory.objects.create(
+                    user=user_profile,
+                    amount=amount,
+                    transaction_type='CHARGE',
+                    description='포인트 충전'
+                )
 
+            # 성공 메시지 표시
             messages.success(request, f'{amount:,}포인트가 충전되었습니다.')
-            return redirect('baseball_matching:point_history')
+            # 메인 페이지로 리다이렉트
+            return redirect('baseball_matching:main')
 
-    return render(request, 'baseball_matching/charge_points.html')
+    return render(request, 'baseball_matching/charge_points.html') # 충전 시 홈으로 돌아가게끔 경로 수정
 
 
 @login_required
