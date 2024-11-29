@@ -67,7 +67,7 @@ class GameForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['phone_number']  # UserProfile 모델에 있는 필드들을 지정
+        fields = ['phone_number']
         widgets = {
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control',

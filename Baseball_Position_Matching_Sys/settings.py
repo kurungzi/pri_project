@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'baseball_matching',
     'django.contrib.sites',
+    'django.contrib.humanize',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -123,7 +124,12 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': os.getenv('3865e4af5cf8eace4712678533a3775b'),
             'secret': os.getenv('ldtCiCj5B4M8ankJgBVEhBUNk5BKTreU'),
             'key': ''
-        }
+        },
+        'AUTH_PARAMS': {
+            'prompt': 'login'  # 매번 로그인 창이 뜨도록 설정
+        },
+        'SCOPE': ['profile', 'account_email'],
+        'OAUTH_CALLBACK_URLS': ['http://localhost:8000/accounts/kakao/callback/'],
     }
 }
 

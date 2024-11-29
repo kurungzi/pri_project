@@ -1,0 +1,293 @@
+{#<!-- templates/baseball_matching/profile.html -->#}
+{#{% extends 'baseball_matching/base.html' %}#}
+{#{% load humanize %}#}
+{#{% block title %}프로필{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#<div class="row justify-content-center">#}
+{#    <div class="col-md-8">#}
+{#        <div class="card shadow-sm">#}
+{#            <div class="card-header bg-primary text-white">#}
+{#                <h3 class="mb-0">내 프로필</h3>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <div class="row">#}
+{#                    <div class="col-md-4 text-center mb-4 mb-md-0">#}
+{#                        <div class="p-3 bg-light rounded-circle d-inline-block mb-3">#}
+{#                            <i class="fas fa-user fa-4x text-primary"></i>#}
+{#                        </div>#}
+{#                        <h4>{{ user.username }}</h4>#}
+{#                    </div>#}
+{#                    <div class="col-md-8">#}
+{#                        <div class="user-info">#}
+{#                            <h5 class="border-bottom pb-2">개인 정보</h5>#}
+{#                            <p><strong>이메일:</strong> {{ user.email|default:"미등록" }}</p>#}
+{#                            <p><strong>전화번호:</strong> {{ user.userprofile.phone_number|default:"미등록" }}</p>#}
+{#                            #}
+{#                            <h5 class="border-bottom pb-2 mt-4">포인트 정보</h5>#}
+{#                            <p><strong>보유 포인트:</strong> {{ user.userprofile.points|intcomma }}P</p>#}
+{#                            #}
+{#                            <div class="mt-4">#}
+{#                                <a href="{% url 'baseball_matching:edit_profile' %}" class="btn btn-primary">#}
+{#                                    프로필 수정#}
+{#                                </a>#}
+{#                                <a href="{% url 'baseball_matching:point_history' %}" class="btn btn-info ms-2">#}
+{#                                    포인트 내역#}
+{#                                </a>#}
+{#                                <a href="{% url 'baseball_matching:charge_points' %}" class="btn btn-success ms-2">#}
+{#                                    포인트 충전#}
+{#                                </a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#                <!-- 참가 중인 경기 목록 -->#}
+{#                <div class="mt-5">#}
+{#                    <h5 class="border-bottom pb-2">참가 중인 경기</h5>#}
+{#                    <div class="table-responsive">#}
+{#                        <table class="table">#}
+{#                            <thead>#}
+{#                                <tr>#}
+{#                                    <th>경기</th>#}
+{#                                    <th>날짜</th>#}
+{#                                    <th>포지션</th>#}
+{#                                    <th>팀</th>#}
+{#                                </tr>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{#                                {% for position in user_positions %}#}
+{#                                <tr>#}
+{#                                    <td>#}
+{#                                        <a href="{% url 'baseball_matching:game_detail' position.game.id %}">#}
+{#                                            {{ position.game.title }}#}
+{#                                        </a>#}
+{#                                    </td>#}
+{#                                    <td>{{ position.game.date }}</td>#}
+{#                                    <td>{{ position.get_position_display }}</td>#}
+{#                                    <td>{{ position.get_team_display }}</td>#}
+{#                                </tr>#}
+{#                                {% empty %}#}
+{#                                <tr>#}
+{#                                    <td colspan="4" class="text-center">참가 중인 경기가 없습니다.</td>#}
+{#                                </tr>#}
+{#                                {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<!-- Font Awesome 추가 -->#}
+{#<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">#}
+{#{% endblock %}#}
+
+<!-- templates/baseball_matching/profile.html -->
+{% extends 'baseball_matching/base.html' %}
+{% load humanize %}
+
+{% block title %}프로필 - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- 상단 요약 정보 카드들 -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50">보유 포인트</h6>
+                            <h3 class="mb-0">{{ user.userprofile.points|intcomma }}P</h3>
+                        </div>
+                        <div class="rounded-circle bg-white p-3">
+                            <i class="fas fa-coins text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="{% url 'baseball_matching:charge_points' %}" class="text-white text-decoration-none">
+                        충전하기 <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50">참여 중인 경기</h6>
+                            <h3 class="mb-0">{{ user_positions.count }}개</h3>
+                        </div>
+                        <div class="rounded-circle bg-white p-3">
+                            <i class="fas fa-baseball-ball text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="{% url 'baseball_matching:game_list' %}" class="text-white text-decoration-none">
+                        경기 목록 보기 <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50">회원 등급</h6>
+                            <h3 class="mb-0">일반회원</h3>
+                        </div>
+                        <div class="rounded-circle bg-white p-3">
+                            <i class="fas fa-user text-info fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="#" class="text-white text-decoration-none">
+                        등급 혜택 보기 <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 참가 중인 경기 목록 -->
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">참가 중인 경기</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>경기명</th>
+                                    <th>날짜</th>
+                                    <th>포지션</th>
+                                    <th>팀</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in user_positions %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'baseball_matching:game_detail' position.game.id %}" 
+                                           class="text-decoration-none">
+                                            {{ position.game.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ position.game.date }}</td>
+                                    <td>{{ position.get_position_display }}</td>
+                                    <td>
+                                        <span class="badge {% if position.team == 'HOME' %}bg-primary{% else %}bg-danger{% endif %}">
+                                            {{ position.get_team_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">
+                                        <p class="text-muted mb-0">참가 중인 경기가 없습니다.</p>
+                                        <a href="{% url 'baseball_matching:game_list' %}" class="btn btn-sm btn-primary mt-2">
+                                            경기 찾아보기
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사용자 정보 및 빠른 메뉴 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">내 정보</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-circle mb-3">
+                            <i class="fas fa-user fa-3x text-primary"></i>
+                        </div>
+                        <h4>{{ user.username }}</h4>
+                        <p class="text-muted">{{ user.email|default:"이메일 미등록" }}</p>
+                    </div>
+                    <div class="border-top pt-3">
+                        <p><strong>전화번호:</strong> {{ user.userprofile.phone_number|default:"미등록" }}</p>
+                        <p><strong>가입일:</strong> {{ user.date_joined|date:"Y년 m월 d일" }}</p>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{% url 'baseball_matching:edit_profile' %}" class="btn btn-primary w-100">
+                        프로필 수정
+                    </a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">빠른 메뉴</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'baseball_matching:point_history' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-history me-2"></i> 포인트 내역
+                        </a>
+                        <a href="{% url 'baseball_matching:charge_points' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus-circle me-2"></i> 포인트 충전
+                        </a>
+                        <a href="{% url 'baseball_matching:game_list' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-search me-2"></i> 경기 찾기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 필요한 CSS -->
+<style>
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .table th {
+        font-weight: 500;
+        border-top: none;
+    }
+</style>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock %}

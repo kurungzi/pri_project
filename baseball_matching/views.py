@@ -28,11 +28,25 @@ def register(request):
     return render(request, 'baseball_matching/register.html', {'form': form})
 
 
+# @login_required
+# def profile(request):
+#     return render(request, 'baseball_matching/profile.html', {
+#         'user_profile': request.user.userprofile
+#     })
+
 @login_required
 def profile(request):
-    return render(request, 'baseball_matching/profile.html', {
-        'user_profile': request.user.userprofile
-    })
+    # 사용자가 참가 중인 포지션들 가져오기
+    user_positions = Position.objects.filter(
+        player=request.user.userprofile,
+        is_filled=True
+    ).select_related('game')
+
+    context = {
+        'user': request.user,
+        'user_positions': user_positions
+    }
+    return render(request, 'baseball_matching/profile.html', context)
 
 
 @login_required
