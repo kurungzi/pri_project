@@ -121,15 +121,16 @@ SITE_ID = 1
 SOCIALACCOUNT_PROVIDERS = {
     'kakao': {
         'APP': {
-            'client_id': os.getenv('3865e4af5cf8eace4712678533a3775b'),
-            'secret': os.getenv('ldtCiCj5B4M8ankJgBVEhBUNk5BKTreU'),
+            'client_id': '3865e4af5cf8eace4712678533a3775b',
+            'secret': '', #os.getenv('ldtCiCj5B4M8ankJgBVEhBUNk5BKTreU'),
             'key': ''
         },
         'AUTH_PARAMS': {
-            'prompt': 'login'  # 매번 로그인 창이 뜨도록 설정
+            'auth_type': 'reauthenticate',  # 추가
+            'prompt': 'login'  # 추가
         },
-        'SCOPE': ['profile', 'account_email'],
-        'OAUTH_CALLBACK_URLS': ['http://localhost:8000/accounts/kakao/callback/'],
+        'SCOPE': ['profile_nickname'],  # 필요한 권한 범위
+        'METHOD': 'oauth2'  # 추가
     }
 }
 
@@ -161,7 +162,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
+LOGIN_REDIRECT_URL = 'baseball_matching:main'  # 로그인 후 리다이렉트
 ACCOUNT_LOGOUT_REDIRECT_URL = 'baseball_matching:main'  # 네임스페이스 포함
-
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_LOGOUT_ON_GET = True  # GET 요청으로 로그아웃 허용
+ACCOUNT_EMAIL_VERIFICATION = 'none' # 이메일 인증 비활성화
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'

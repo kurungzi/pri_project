@@ -6,6 +6,9 @@ from django.dispatch import receiver
 # 데이터베이스 구조를 정의하는 파일
 # ORM을 통한 데이터베이스 조작의 기준
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)

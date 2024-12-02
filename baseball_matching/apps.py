@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 class BaseballMatchingConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'baseball_matching' #애플리케이션의 전체 경로
+    name = 'baseball_matching'
 
     def ready(self):
         import baseball_matching.signals
