@@ -13,6 +13,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
     phone_number = models.CharField(max_length=15, blank=True)
+    profile_image = models.ImageField(
+        upload_to='profile_images',
+        default='~/Desktop/Baseball_Position_Matching_Sys/static/images/baseball_user_image.webp',
+        blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

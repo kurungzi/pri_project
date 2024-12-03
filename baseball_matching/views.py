@@ -52,7 +52,7 @@ def profile(request):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=request.user.userprofile)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid():
             form.save()
             messages.success(request, '프로필이 수정되었습니다.')

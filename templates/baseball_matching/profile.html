@@ -85,7 +85,7 @@
 {#<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">#}
 {#{% endblock %}#}
 
-<!-- templates/baseball_matching/profile.html -->
+<!-- templates/baseball_matching/profile.html 2번째-->
 {% extends 'baseball_matching/base.html' %}
 {% load humanize %}
 
@@ -291,3 +291,39 @@
 <!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 {% endblock %}
+
+<!-- 이미지 파일 추가시 사용할 -->
+{#{% extends 'baseball_matching/base.html' %}#}
+{##}
+{#{% block content %}#}
+{#<div class="row justify-content-center">#}
+{#    <div class="col-md-6">#}
+{#        <div class="card">#}
+{#            <div class="card-body text-center">#}
+{#                <!-- 프로필 이미지 -->#}
+{#                <div class="mb-4">#}
+{#                    {% if user.userprofile.profile_image %}#}
+{#                        <img src="{{ user.userprofile.profile_image.url }}" #}
+{#                             alt="프로필 이미지" #}
+{#                             class="rounded-circle"#}
+{#                             style="width: 150px; height: 150px; object-fit: cover;">#}
+{#                    {% else %}#}
+{#                        <div class="default-profile-image">#}
+{#                            <i class="fas fa-user fa-5x"></i>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                </div>#}
+{##}
+{#                <h3>{{ user.username }}</h3>#}
+{#                <p>전화번호: {{ user.userprofile.phone_number|default:"미등록" }}</p>#}
+{#                <p>보유 포인트: {{ user.userprofile.points }}P</p>#}
+{##}
+{#                <div class="mt-4">#}
+{#                    <a href="{% url 'baseball_matching:edit_profile' %}" class="btn btn-primary">프로필 수정</a>#}
+{#                    <a href="{% url 'baseball_matching:charge_points' %}" class="btn btn-success">포인트 충전</a>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#{% endblock %}#}

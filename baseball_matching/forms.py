@@ -1,10 +1,9 @@
 # baseball_matching/forms.py
 
 from django import forms
-from .models import Game, UserProfile
+from .models import UserProfile, Game
 
-from django import forms
-from .models import Game
+
 
 # 웹 폼을 정의하고 유효성 검사를 처리
 # 모델 폼과 일반 폼을 정의
@@ -51,26 +50,17 @@ class GameForm(forms.ModelForm):
             'description': '설명',
         }
 
-# class GameForm(forms.ModelForm):
-#     class Meta:
-#         model = Game
-#         fields = ['title', 'date', 'time', 'location', 'participation_fee', 'description']
-#         widgets = {
-#             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-#             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-#             'title': forms.TextInput(attrs={'class': 'form-control'}),
-#             'location': forms.TextInput(attrs={'class': 'form-control'}),
-#             'participation_fee': forms.NumberInput(attrs={'class': 'form-control'}),
-#             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-#         }
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['phone_number']
+        fields = ['phone_number', 'profile_image']
         widgets = {
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': '전화번호를 입력하세요'
-            })
+            }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'form-control'})
         }
