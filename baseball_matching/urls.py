@@ -19,4 +19,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('used-items/', views.used_item_list, name='used_item_list'),
+    path('used-items/create/', views.used_item_create, name='used_item_create'),
+    path('used-items/<int:item_id>/', views.used_item_detail, name='used_item_detail'),
 ]

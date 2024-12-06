@@ -1,0 +1,34 @@
+<!-- templates/baseball_matching/used_item_list.html -->
+{% extends 'baseball_matching/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>중고거래</h2>
+        <button onclick="location.href='{% url 'baseball_matching:used_item_create' %}'" 
+                class="btn btn-success rounded-circle d-flex justify-content-center align-items-center"
+                style="width: 60px; height: 60px; position: fixed; bottom: 30px; right: 30px; z-index: 1000; font-size: 40px;">
+            +
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {% for item in items %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm hover-shadow">
+                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" 
+                     style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{ item.title }}</h5>
+                    <p class="card-text font-weight-bold">{{ item.price|intcomma }}원</p>
+                    <p class="card-text small text-muted">
+                        <span>{{ item.seller.user.username }}</span>
+                        <span class="ms-2">조회 {{ item.views }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

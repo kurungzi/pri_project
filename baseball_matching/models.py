@@ -14,13 +14,16 @@ class UserProfile(models.Model):
     points = models.IntegerField(default=0)
     phone_number = models.CharField(max_length=15, blank=True)
     profile_image = models.ImageField(
-        upload_to='profile_images',
-        default='~/Desktop/Baseball_Position_Matching_Sys/static/images/baseball_user_image.webp',
-        blank=True)
+        upload_to='profile_images/',
+        null=True,
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user.username}의 프로필"
+    def get_profile_image_url(self):
+        if self.profile_image:
+            return self.profile_image.url
+        return '/static/images/baseball_user_image.webp'
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
@@ -87,3 +90,28 @@ class Position(models.Model):
 
     def __str__(self):
         return f"{self.game.title} - {self.team} {self.get_position_display()}"
+
+
+class UsedItem(models.Model):
+    CONDITION_CHOICES = [
+        ('상', '상'),
+        ('중', '중'),
+        ('하', '하')
+    ]
+    ITEM_TYPE_CHOICES = [
+        ('중고', '중고'),
+        ('신제품', '신제품')
+    ]
+
+    seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    price = models.IntegerField()
+    description = models.TextField()
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES)
+    item_type = models.CharField(max_length=10, choices=ITEM_TYPE_CHOICES)
+    category = models.CharField(max_length=100)  # 배트, 글러브 등
+    brand = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='used_items/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    views = models.IntegerField(default=0)
+    is_sold = models.BooleanField(default=False)

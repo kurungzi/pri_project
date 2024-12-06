@@ -1,8 +1,7 @@
 # baseball_matching/forms.py
 
 from django import forms
-from .models import UserProfile, Game
-
+from .models import UserProfile, Game, UsedItem
 
 
 # 웹 폼을 정의하고 유효성 검사를 처리
@@ -63,4 +62,47 @@ class ProfileForm(forms.ModelForm):
             }),
             'profile_image': forms.FileInput(attrs={
                 'class': 'form-control'})
+        }
+
+
+# forms.py에 추가
+class UsedItemForm(forms.ModelForm):
+    class Meta:
+        model = UsedItem
+        fields = ['category', 'brand', 'title', 'price', 'condition', 'item_type', 'description', 'image']
+        widgets = {
+            'category': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': '카테고리를 선택해주세요'
+            }),
+            'brand': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': '브랜드를 선택해주세요'
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '제목을 입력해주세요'
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '가격을 입력해주세요'
+            }),
+            'condition': forms.RadioSelect(attrs={'class': 'form-check-input'}),
+            'item_type': forms.RadioSelect(attrs={'class': 'form-check-input'}),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': '내용을 입력해 주세요.',
+                'rows': 5
+            }),
+            'image': forms.FileInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'category': '카테고리',
+            'brand': '브랜드',
+            'title': '제목',
+            'price': '가격',
+            'condition': '상품상태',
+            'item_type': '상품분류',
+            'description': '내용',
+            'image': '이미지'
         }

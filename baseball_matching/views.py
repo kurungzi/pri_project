@@ -3,11 +3,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.db import transaction
-from .models import Game, Position, UserProfile, PointHistory
-from .forms import GameForm, ProfileForm
+from .models import Game, Position, UserProfile, PointHistory, UsedItem
+from .forms import GameForm, ProfileForm, UsedItemForm
 
 # HTTP 요청을 처리하고 응답을 반환하는 로직
 # 비즈니스 로직의 핵심
@@ -15,17 +15,39 @@ from .forms import GameForm, ProfileForm
 def main(request):
     return render(request, 'baseball_matching/main.html')
 
+# def register(request):
+#     if request.method == 'POST':
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             messages.success(request, '회원가입이 완료되었습니다!')
+#             return redirect('baseball_matching:main')
+#     else:
+#         form = UserCreationForm()
+#     return render(request, 'baseball_matching/register.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, '회원가입이 완료되었습니다!')
-            return redirect('baseball_matching:main')
+            # UserProfile은 signals.py에서 자동 생성되므로 여기서는 생성하지 않음
+
+            # 로그인 처리
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username,
+                                password=raw_password,
+                                backend='django.contrib.auth.backends.ModelBackend')
+            if user is not None:
+                login(request, user)
+                messages.success(request, '회원가입이 완료되었습니다!')
+                return redirect('baseball_matching:main')
     else:
         form = UserCreationForm()
     return render(request, 'baseball_matching/register.html', {'form': form})
+
 
 
 # @login_required
@@ -252,3 +274,30 @@ def point_history(request):
     return render(request, 'baseball_matching/point_history.html', {
         'point_history': histories
     })
+
+# views.py에 추가
+@login_required
+def used_item_list(request):
+    items = UsedItem.objects.filter(is_sold=False).order_by('-created_at')
+    return render(request, 'baseball_matching/used_item_list.html', {'items': items})
+
+@login_required
+def used_item_create(request):
+    if request.method == 'POST':
+        form = UsedItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.seller = request.user.userprofile
+            item.save()
+            messages.success(request, '상품이 등록되었습니다.')
+            return redirect('baseball_matching:used_item_list')
+    else:
+        form = UsedItemForm()
+    return render(request, 'baseball_matching/used_item_form.html', {'form': form})
+
+@login_required
+def used_item_detail(request, item_id):
+    item = get_object_or_404(UsedItem, id=item_id)
+    item.views += 1
+    item.save()
+    return render(request, 'baseball_matching/used_item_detail.html', {'item': item})

@@ -17,6 +17,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'baseball_matching:game_list' %}">경기 목록</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'baseball_matching:used_item_list' %}">중고거래</a>
+                    </li>
+                
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'baseball_matching:game_create' %}">경기 생성</a>
@@ -70,64 +74,3 @@
 </body>
 </html>
 
-
-
-
-
-{#{% extends 'baseball_matching/base.html' %}#}
-{#{% load static %}#}
-{##}
-{#{% block content %}#}
-{#<div class="container py-5">#}
-{#    <div class="row justify-content-center">#}
-{#        <div class="col-md-6">#}
-{#            <div class="card">#}
-{#                <div class="card-header">#}
-{#                    <h2 class="text-center mb-0">프로필 수정</h2>#}
-{#                </div>#}
-{#                <div class="card-body">#}
-{#                    <div class="text-center mb-4">#}
-{#                        {% if user.userprofile.profile_image %}#}
-{#                            <img src="{{ user.userprofile.profile_image.url }}" #}
-{#                                 class="rounded-circle" #}
-{#                                 style="width: 150px; height: 150px; object-fit: cover;">#}
-{#                        {% else %}#}
-{#                            <img src="{% static 'images/default_profile.png' %}" #}
-{#                                 class="rounded-circle" #}
-{#                                 style="width: 150px; height: 150px; object-fit: contain;">#}
-{#                        {% endif %}#}
-{#                    </div>#}
-{##}
-{#                    <form method="post" enctype="multipart/form-data">#}
-{#                        {% csrf_token %}#}
-{#                        <!-- Phone number -->#}
-{#                        <div class="mb-3">#}
-{#                            <label for="phone_number" class="form-label">Phone number</label>#}
-{#                            <input type="text" #}
-{#                                   name="phone_number" #}
-{#                                   class="form-control" #}
-{#                                   id="phone_number"#}
-{#                                   value="{{ user.userprofile.phone_number }}"#}
-{#                                   placeholder="전화번호를 입력하세요">#}
-{#                        </div>#}
-{##}
-{#                        <!-- Profile image -->#}
-{#                        <div class="mb-3">#}
-{#                            <label for="profile_image" class="form-label">Profile image</label>#}
-{#                            <input type="file" #}
-{#                                   name="profile_image" #}
-{#                                   class="form-control" #}
-{#                                   id="profile_image">#}
-{#                        </div>#}
-{##}
-{#                        <div class="d-grid gap-2">#}
-{#                            <button type="submit" class="btn btn-primary">저장</button>#}
-{#                            <a href="{% url 'baseball_matching:profile' %}" class="btn btn-secondary">취소</a>#}
-{#                        </div>#}
-{#                    </form>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{#{% endblock %}#}
