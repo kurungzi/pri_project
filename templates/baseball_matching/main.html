@@ -1,66 +1,70 @@
 {% extends 'baseball_matching/base.html' %}
-
-{% block title %}야구야구{% endblock %}
-
+{% load humanize %}
 {% block content %}
+
 <div class="container">
+    <!-- 기존 상단 섹션 유지 -->
     <div class="text-center my-5">
         <h1 class="display-4 mb-4">야구야구</h1>
         <p class="lead mb-5">원하는 포지션으로 경기를 즐겨보세요!</p>
     </div>
 
-    <div class="row justify-content-center g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 text-center hover-shadow">
-                <div class="card-body">
-                    <h3 class="card-title">경기 목록</h3>
-                    <p class="card-text">현재 모집 중인 경기들을 확인하고 원하는 포지션에 참가해보세요.</p>
-                    <a href="{% url 'baseball_matching:game_list' %}" class="btn btn-primary">경기 보러가기</a>
+    <!-- 경기 목록 섹션 -->
+    <div class="games-list">
+        {% for game in current_games %}
+        <div class="card mb-3 hover-shadow">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <div class="text-muted">
+                            {{ game.date|date:"m/d" }} {{ game.date|date:"D" }}
+                        </div>
+                        <div class="fw-bold">
+                            {{ game.time|time:"H:i" }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="card-title mb-0">{{ game.title }}</h5>
+                        <small class="text-muted">{{ game.location }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-primary">
+                            {{ game.participation_fee|intcomma }}P
+                        </div>
+                        {% if game.description %}
+                        <small class="text-muted">{{ game.description|truncatechars:30 }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3 text-end">
+                        {% if game.remaining_positions <= 6 %}
+                        <a href="{% url 'baseball_matching:game_detail' game.id %}" 
+                           class="btn btn-danger">마감임박</a>
+                        {% else %}
+                        <a href="{% url 'baseball_matching:game_detail' game.id %}" 
+                           class="btn btn-success">신청하기</a>
+                        {% endif %}
+                        <div class="small text-muted mt-1">
+                            남은 포지션: {{ game.remaining_positions }}개
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        {% if user.is_authenticated %}
-        <div class="col-md-4">
-            <div class="card h-100 text-center hover-shadow">
-                <div class="card-body">
-                    <h3 class="card-title">경기 등록</h3>
-                    <p class="card-text">새로운 경기를 등록하고 팀원을 모집해보세요.</p>
-                    <a href="{% url 'baseball_matching:game_create' %}" class="btn btn-success">경기 등록하기</a>
-                </div>
-            </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <p class="text-muted">현재 등록된 경기가 없습니다.</p>
         </div>
-
-        <div class="col-md-4">
-            <div class="card h-100 text-center hover-shadow">
-                <div class="card-body">
-                    <h3 class="card-title">내 포인트</h3>
-                    <p class="card-text">현재 보유 포인트: {{ user.userprofile.points }}P</p>
-                    <a href="{% url 'baseball_matching:charge_points' %}" class="btn btn-info">포인트 충전</a>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-md-4">
-            <div class="card h-100 text-center hover-shadow">
-                <div class="card-body">
-                    <h3 class="card-title">회원가입</h3>
-                    <p class="card-text">회원가입하고 경기에 참여해보세요.</p>
-                    <a href="{% url 'baseball_matching:register' %}" class="btn btn-success">회원가입</a>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+        {% endfor %}
     </div>
 </div>
 
 <style>
     .hover-shadow {
-        transition: all 0.3s ease;
+        transition: box-shadow 0.3s ease;
     }
     .hover-shadow:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 </style>
+
 {% endblock %}

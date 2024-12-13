@@ -25,6 +25,33 @@ class UserProfile(models.Model):
             return self.profile_image.url
         return '/static/images/baseball_user_image.webp'
 
+    def get_participation_count(self):
+        # 사용자의 총 경기 참여 횟수를 계산
+        return Position.objects.filter(
+            player=self,
+            is_filled=True
+        ).count()
+
+    def get_level(self):
+        participation_count = self.get_participation_count()
+
+        if participation_count >= 100:
+            return 8
+        elif participation_count >= 60:
+            return 7
+        elif participation_count >= 40:
+            return 6
+        elif participation_count >= 20:
+            return 5
+        elif participation_count >= 12:
+            return 4
+        elif participation_count >= 6:
+            return 3
+        elif participation_count >= 2:
+            return 2
+        else:
+            return 1
+
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -61,9 +88,27 @@ class Game(models.Model):
     status = models.CharField(max_length=20, choices=GAME_STATUS, default='RECRUITING')
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    creator = models.ForeignKey(
+        UserProfile,
+        on_delete=models.CASCADE,
+        related_name='created_games',
+        null=True,  # null 허용
+        blank=True  # 폼에서 비워둘 수 있음
+    )
 
     def __str__(self):
         return f"{self.date} {self.title}"
+
+class ChatRoom(models.Model):
+    seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='seller_chats')
+    buyer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='buyer_chats')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+    sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Position(models.Model):
@@ -102,6 +147,17 @@ class UsedItem(models.Model):
         ('중고', '중고'),
         ('신제품', '신제품')
     ]
+
+    STATUS_CHOICES = [
+        ('판매중', '판매중'),
+        ('예약중', '예약중'),
+        ('거래완료', '거래완료')
+    ]
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='판매중'
+    )
 
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)

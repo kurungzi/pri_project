@@ -15,18 +15,20 @@
     <div class="row g-4">
         {% for item in items %}
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm hover-shadow">
-                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" 
-                     style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title text-truncate">{{ item.title }}</h5>
-                    <p class="card-text font-weight-bold">{{ item.price|intcomma }}원</p>
-                    <p class="card-text small text-muted">
-                        <span>{{ item.seller.user.username }}</span>
-                        <span class="ms-2">조회 {{ item.views }}</span>
-                    </p>
+            <a href="{% url 'baseball_matching:used_item_detail' item.id %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" 
+                         style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate text-dark">{{ item.title }}</h5>
+                        <p class="card-text font-weight-bold text-dark">{{ item.price|intcomma }}원</p>
+                        <p class="card-text small text-muted">
+                            <span>{{ item.seller.user.username }}</span>
+                            <span class="ms-2">조회 {{ item.views }}</span>
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         {% endfor %}
     </div>

@@ -12,8 +12,29 @@ from .forms import GameForm, ProfileForm, UsedItemForm
 # HTTP 요청을 처리하고 응답을 반환하는 로직
 # 비즈니스 로직의 핵심
 
+# views.py
+from django.utils import timezone
+from django.db.models import Count
+
 def main(request):
-    return render(request, 'baseball_matching/main.html')
+    # 현재 날짜 이후의 모집 중인 경기들을 날짜순으로 가져옴
+    current_games = Game.objects.filter(
+        date__gte=timezone.now().date(),
+        status='RECRUITING'
+    ).order_by('date', 'time')
+
+    # 각 경기별 남은 포지션 수 계산
+    for game in current_games:
+        filled_positions = Position.objects.filter(
+            game=game,
+            is_filled=True
+        ).count()
+        # 전체 포지션 수(18) - 채워진 포지션 수 = 남은 포지션 수
+        game.remaining_positions = 18 - filled_positions
+
+    return render(request, 'baseball_matching/main.html', {
+        'current_games': current_games
+    })
 
 # def register(request):
 #     if request.method == 'POST':
@@ -64,9 +85,15 @@ def profile(request):
         is_filled=True
     ).select_related('game')
 
+    # 사용자가 등록한 판매물품들 가져오기
+    user_items = UsedItem.objects.filter(
+        seller=request.user.userprofile
+    ).order_by('-created_at')  # 최신순으로 정렬
+
     context = {
         'user': request.user,
-        'user_positions': user_positions
+        'user_positions': user_positions,
+        'user_items': user_items  # 템플릿에 전달할 판매물품 목록 추가
     }
     return render(request, 'baseball_matching/profile.html', context)
 
@@ -103,34 +130,78 @@ def game_detail(request, game_id):
     }
     return render(request, 'baseball_matching/game_detail.html', context)
 
+@login_required
+def change_item_status(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(UsedItem, id=item_id, seller=request.user.userprofile)
+        new_status = request.POST.get('status')
+        if new_status in dict(UsedItem.STATUS_CHOICES):
+            item.status = new_status
+            item.save()
+    return redirect('baseball_matching:used_item_detail', item_id=item_id)
 
-# @login_required
-# def game_create(request):
-#     if request.method == 'POST':
-#         form = GameForm(request.POST)
-#         if form.is_valid():
-#             game = form.save(commit=False)
-#             game.save()
-#
-#             # 포지션 자동 생성
-#             positions = ['P', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF']
-#             for team in ['HOME', 'AWAY']:
-#                 for pos in positions:
-#                     Position.objects.create(
-#                         game=game,
-#                         team=team,
-#                         position=pos
-#                     )
-#
-#             messages.success(request, '경기가 성공적으로 등록되었습니다.')
-#             return redirect('baseball_matching:game_detail', game_id=game.id)
-#     else:
-#         form = GameForm()
-#
-#     return render(request, 'baseball_matching/game_form.html', {
-#         'form': form,
-#         'title': '새 경기 등록'
-#     })
+
+@login_required
+def game_edit(request, game_id):
+    game = get_object_or_404(Game, id=game_id, creator=request.user.userprofile)
+
+    if request.method == 'POST':
+        form = GameForm(request.POST, instance=game)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '경기가 수정되었습니다.')
+            return redirect('baseball_matching:game_detail', game_id=game.id)
+    else:
+        form = GameForm(instance=game)
+
+    return render(request, 'baseball_matching/game_form.html', {
+        'form': form,
+        'title': '경기 수정',
+        'is_edit': True
+    })
+
+
+@login_required
+def game_delete(request, game_id):
+    game = get_object_or_404(Game, id=game_id, creator=request.user.userprofile)
+
+    if request.method == 'POST':
+        game.delete()
+        messages.success(request, '경기가 삭제되었습니다.')
+        return redirect('baseball_matching:game_list')
+
+    return render(request, 'baseball_matching/game_delete_confirm.html', {'game': game})
+
+
+@login_required
+def used_item_edit(request, item_id):
+    item = get_object_or_404(UsedItem, id=item_id, seller=request.user.userprofile)
+
+    if request.method == 'POST':
+        form = UsedItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '물품이 수정되었습니다.')
+            return redirect('baseball_matching:used_item_detail', item_id=item.id)
+    else:
+        form = UsedItemForm(instance=item)
+
+    return render(request, 'baseball_matching/used_item_form.html', {
+        'form': form,
+        'is_edit': True
+    })
+
+
+@login_required
+def used_item_delete(request, item_id):
+    item = get_object_or_404(UsedItem, id=item_id, seller=request.user.userprofile)
+
+    if request.method == 'POST':
+        item.delete()
+        messages.success(request, '물품이 삭제되었습니다.')
+        return redirect('baseball_matching:used_item_list')
+
+    return render(request, 'baseball_matching/used_item_delete_confirm.html', {'item': item})
 
 @login_required
 def game_create(request):
@@ -138,6 +209,7 @@ def game_create(request):
         form = GameForm(request.POST)
         if form.is_valid():
             game = form.save(commit=False)
+            game.creator = request.user.userprofile
             game.status = 'RECRUITING'  # 초기 상태 설정
             game.save()
 
@@ -301,3 +373,18 @@ def used_item_detail(request, item_id):
     item.views += 1
     item.save()
     return render(request, 'baseball_matching/used_item_detail.html', {'item': item})
+
+
+@login_required
+def used_item_detail(request, item_id):
+    item = get_object_or_404(UsedItem, id=item_id)
+    return render(request, 'baseball_matching/used_item_detail.html', {
+        'item': item
+    })
+
+@login_required
+def chat_room(request, seller_id):
+    seller = get_object_or_404(UserProfile, id=seller_id)
+    return render(request, 'baseball_matching/chat_room.html', {
+        'seller': seller
+    })

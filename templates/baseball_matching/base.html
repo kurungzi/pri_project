@@ -1,82 +1,3 @@
-{#<!-- templates/baseball_matching/base.html -->#}
-{#<!DOCTYPE html>#}
-{#<html>#}
-{#<head>#}
-{#    <title>{% block title %}야구야구{% endblock %}</title>#}
-{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">#}
-{#</head>#}
-{#<body>#}
-{#    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">#}
-{#        <div class="container">#}
-{#            <a class="navbar-brand" href="{% url 'baseball_matching:main' %}">야구야구</a>#}
-{#            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">#}
-{#                <span class="navbar-toggler-icon"></span>#}
-{#            </button>#}
-{#            <div class="collapse navbar-collapse" id="navbarNav">#}
-{#                <ul class="navbar-nav me-auto">#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{% url 'baseball_matching:game_list' %}">경기 목록</a>#}
-{#                    </li>#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{% url 'baseball_matching:used_item_list' %}">중고거래</a>#}
-{#                    </li>#}
-{#                #}
-{#                    {% if user.is_authenticated %}#}
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link" href="{% url 'baseball_matching:game_create' %}">경기 생성</a>#}
-{#                        </li>#}
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link" href="{% url 'baseball_matching:charge_points' %}">포인트 충전</a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
-{#                </ul>#}
-{#                <ul class="navbar-nav">#}
-{#                    {% if user.is_authenticated %}#}
-{#                        <li class="nav-item">#}
-{#                            <span class="nav-link">{{ user.userprofile.points }}P</span>#}
-{#                        </li>#}
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link" href="{% url 'baseball_matching:profile' %}">프로필</a>#}
-{#                        </li>#}
-{#                        <li class="nav-item">#}
-{#                            <form method="post" action="{% url 'logout' %}" class="d-inline m-0 p-0">#}
-{#                                {% csrf_token %}#}
-{#                                <button type="submit" class="btn nav-link bg-transparent border-0">로그아웃</button>#}
-{#                            </form>#}
-{#                        </li>#}
-{#                    {% else %}#}
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link" href="{% url 'login' %}">로그인</a>#}
-{#                        </li>#}
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link" href="{% url 'baseball_matching:register' %}">회원가입</a>#}
-{#                        </li>#}
-{#                    {% endif %}#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{#    </nav>#}
-{##}
-{#    <div class="container mt-4">#}
-{#        {% if messages %}#}
-{#            {% for message in messages %}#}
-{#                <div class="alert alert-{{ message.tags }}">#}
-{#                    {{ message }}#}
-{#                </div>#}
-{#            {% endfor %}#}
-{#        {% endif %}#}
-{##}
-{#        {% block content %}#}
-{#        {% endblock %}#}
-{#    </div>#}
-{##}
-{#    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>#}
-{#</body>#}
-{#</html>#}
-{##}
-
-
-<!-- templates/baseball_matching/base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -84,183 +5,231 @@
     <title>{% block title %}야구야구{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-                .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-collapse {
-            display: flex;
-            justify-content: center;
-            flex: 2;
-        }
-
-        .navbar-nav.main-menu {
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .navbar-brand {
-            flex: 0 0 auto;
-        }
-
-        .user-menu {
-            flex: 0 0 auto;
-        }
-        <!-- -->
+        /* 기본 네비게이션 스타일 */
         .navbar {
             background: linear-gradient(to right, #4a0404, #800020, #4a0404);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;  /* 추가 */
         }
-    
-        /* 네비게이션 링크 색상 변경 */
-        .navbar-nav .nav-link {
+        
+        .navbar-brand {
+            padding: 0;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .navbar-brand img:hover {
+            transform: scale(1.05);  /* 호버 시 살짝 커지는 효과 */
+        }
+        
+        
+        
+        /* 컨테이너 레이아웃 */
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 0 1rem;
+        }
+
+        /* 메인 메뉴 컨테이너 */
+        .main-menu-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        /* 메인 메뉴 */
+        .main-menu {
+            display: flex;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        /* 네비게이션 링크 */
+        .nav-link {
             color: #fff !important;
             transition: color 0.3s ease;
         }
-    
-        .navbar-nav .nav-link:hover {
-            color: #ffd700 !important;  /* 호버 시 골드 색상으로 변경 */
+
+        .nav-link:hover {
+            color: #ffd700 !important;
         }
-    
-        /* 토글러 버튼 색상 변경 */
-        .navbar-toggler {
-            border-color: rgba(255,255,255,0.5);
-        }
-    
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-    
-        /* 드롭다운 메뉴 스타일 */
-        .dropdown-menu {
-            background-color: #fff;
-            border: none;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-    
-        .dropdown-item {
-            color: #4a0404;
-        }
-    
-        .dropdown-item:hover {
-            background-color: #f8f0f0;
-            color: #800020;
-        }
-    
-        /* 나머지 기존 스타일은 유지 */
-        .navbar-nav {
-            display: flex;
-            align-items: center;
-        }
-    
-        .nav-item {
-            position: relative;
-            padding: 0 15px;
-        }
-    
-        .dropdown-menu {
+
+        /* 드롭다운 메뉴 - 수정된 부분 */
+        .mega-dropdown {
             display: none;
             position: absolute;
             top: 100%;
-            left: 0;
-            border-radius: 8px;
-            padding: 10px 0;
-            min-width: 200px;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+            left: 50%;
+            transform: translateX(-50%);  /* 중앙 정렬을 위해 추가 */
+            width: 100vw;  /* 뷰포트 전체 너비로 확장 */
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem 0;
+            z-index: 1000;
         }
-    
-        .nav-item:hover .dropdown-menu {
+
+        /* 드롭다운 표시 조건 수정 */
+        .main-menu-container:hover .mega-dropdown {
             display: block;
-            opacity: 1;
-            transform: translateY(0);
         }
-    
-        .navbar-brand {
-            margin-right: 50px;
-            color: #fff !important;
+
+        /* dropdown-inner 수정 */
+        .dropdown-inner {
+            max-width: 100%;  /* 최대 너비를 100%로 설정 */
+            width: 1200px;   /* 기본 너비 설정 */
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 8rem;
+            padding: 0 2rem;
         }
-    
+        
+        /* dropdown-section 수정 */
+        .dropdown-section {
+            text-align: center;
+            min-width: 150px;  /* 최소 너비 설정 */
+            padding: 0 2rem;  /* 좌우 패딩 추가 */
+        }
+        
+        .dropdown-section h6 {
+            color: #800020;
+            margin-bottom: 1.5rem;  /* 여백 증가 */
+            font-weight: bold;
+            font-size: 1.1rem;  /* 제목 크기 증가 */
+        }
+        
+        .dropdown-section a {
+            display: inline-block;
+            color: #333;
+            text-decoration: none;
+            padding: 0.8rem 2rem;  /* 패딩 증가 */
+            transition: color 0.3s ease;
+            white-space: nowrap;
+            width: 100%;  /* 너비 100%로 설정 */
+        }
+
+        .dropdown-section a:hover {
+            color: #800020;
+        }
+
+        /* 사용자 메뉴 */
         .user-menu {
             margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* 반응형 처리 */
+        @media (max-width: 992px) {
+            .main-menu-container {
+                position: static;
+                transform: none;
+            }
+            
+            .mega-dropdown {
+                position: static;
+                box-shadow: none;
+            }
+
+            .dropdown-inner {
+                flex-direction: column;
+                gap: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'baseball_matching:main' %}">
-            <img src="{% static 'images/logo.png' %}" alt="야구야구" height="40">
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <!-- 로고 -->
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- 메인 메뉴 -->
-            <ul class="navbar-nav main-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'baseball_matching:game_list' %}">경기</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'baseball_matching:game_list' %}">경기 목록</a>
+            <a class="navbar-brand" href="{% url 'baseball_matching:main' %}">
+                <img src="{% static 'images/baseball_logo.png' %}" alt="야구야구" style="height: 50px; width: auto;">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- 메인 메뉴 -->
+                <div class="main-menu-container">
+                    <ul class="main-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'baseball_matching:game_list' %}">경기</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'baseball_matching:used_item_list' %}">중고거래</a>
+                        </li>
                         {% if user.is_authenticated %}
-                        <a class="dropdown-item" href="{% url 'baseball_matching:game_create' %}">경기 생성</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'baseball_matching:charge_points' %}">포인트</a>
+                        </li>
                         {% endif %}
+                    </ul>
+                    <!-- 메가 드롭다운 메뉴 -->
+                    <div class="mega-dropdown">
+                        <div class="dropdown-inner">
+                            <div class="dropdown-section">
+                                <h6>경기 관리</h6>
+                                <a href="{% url 'baseball_matching:game_list' %}">경기 목록</a>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'baseball_matching:game_create' %}">경기 생성</a>
+                                {% endif %}
+                            </div>
+                            <div class="dropdown-section">
+                                <h6>중고거래</h6>
+                                <a href="{% url 'baseball_matching:used_item_list' %}">물품 목록</a>
+                                <a href="{% url 'baseball_matching:used_item_create' %}">물품 등록</a>
+                            </div>
+                            {% if user.is_authenticated %}
+                            <div class="dropdown-section">
+                                <h6>포인트</h6>
+                                <a href="{% url 'baseball_matching:charge_points' %}">포인트 충전</a>
+                                <a href="{% url 'baseball_matching:point_history' %}">포인트 내역</a>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </li>
+                </div>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'baseball_matching:used_item_list' %}">중고거래</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'baseball_matching:used_item_list' %}">물품 목록</a>
-                        <a class="dropdown-item" href="{% url 'baseball_matching:used_item_create' %}">물품 등록</a>
-                    </div>
-                </li>
-
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'baseball_matching:charge_points' %}">포인트</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'baseball_matching:charge_points' %}">포인트 충전</a>
-                        <a class="dropdown-item" href="{% url 'baseball_matching:point_history' %}">포인트 내역</a>
-                    </div>
-                </li>
-                {% endif %}
-            </ul>
-
-            <!-- 사용자 메뉴 -->
-            <ul class="navbar-nav user-menu">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <span class="nav-link">{{ user.userprofile.points }}P</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'baseball_matching:profile' %}">프로필</a>
-                    </li>
-                    <li class="nav-item">
-                        <form method="post" action="{% url 'logout' %}" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn nav-link">로그아웃</button>
-                        </form>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">로그인</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'baseball_matching:register' %}">회원가입</a>
-                    </li>
-                {% endif %}
-            </ul>
+                <!-- 사용자 메뉴 -->
+                <ul class="user-menu">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="nav-link">{{ user.userprofile.points }}P</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'baseball_matching:profile' %}">프로필</a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn nav-link">로그아웃</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">로그인</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'baseball_matching:register' %}">회원가입</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}

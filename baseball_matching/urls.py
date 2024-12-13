@@ -22,4 +22,11 @@ urlpatterns = [
     path('used-items/', views.used_item_list, name='used_item_list'),
     path('used-items/create/', views.used_item_create, name='used_item_create'),
     path('used-items/<int:item_id>/', views.used_item_detail, name='used_item_detail'),
+    path('used-items/<int:item_id>/', views.used_item_detail, name='used_item_detail'),
+    path('chat/<int:seller_id>/', views.chat_room, name='chat_room'),
+    path('used-items/<int:item_id>/change-status/', views.change_item_status, name='change_item_status'),
+    path('games/<int:game_id>/edit/', views.game_edit, name='game_edit'),
+    path('games/<int:game_id>/delete/', views.game_delete, name='game_delete'),
+    path('used-items/<int:item_id>/edit/', views.used_item_edit, name='used_item_edit'),
+    path('used-items/<int:item_id>/delete/', views.used_item_delete, name='used_item_delete'),
 ]

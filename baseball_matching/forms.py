@@ -64,20 +64,22 @@ class ProfileForm(forms.ModelForm):
                 'class': 'form-control'})
         }
 
-
-# forms.py에 추가
 class UsedItemForm(forms.ModelForm):
     class Meta:
         model = UsedItem
-        fields = ['category', 'brand', 'title', 'price', 'condition', 'item_type', 'description', 'image']
+        fields = ['image','category', 'brand', 'title', 'price', 'condition', 'item_type', 'description']
         widgets = {
-            'category': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': '카테고리를 선택해주세요'
+            'image': forms.FileInput(attrs={
+                'class': 'form-control'
             }),
-            'brand': forms.Select(attrs={
+
+            'category': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': '브랜드를 선택해주세요'
+                'placeholder': '카테고리를 입력해주세요'
+            }),
+            'brand': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '브랜드를 입력해주세요'
             }),
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -87,16 +89,22 @@ class UsedItemForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '가격을 입력해주세요'
             }),
-            'condition': forms.RadioSelect(attrs={'class': 'form-check-input'}),
-            'item_type': forms.RadioSelect(attrs={'class': 'form-check-input'}),
+            'condition': forms.RadioSelect(attrs={
+                'class': 'form-check-input d-inline-block'
+            }),
+            'item_type': forms.RadioSelect(attrs={
+                'class': 'form-check-input d-inline-block'
+            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': '내용을 입력해 주세요.',
                 'rows': 5
             }),
-            'image': forms.FileInput(attrs={'class': 'form-control'})
+
         }
+
         labels = {
+            'image': '이미지',
             'category': '카테고리',
             'brand': '브랜드',
             'title': '제목',
@@ -104,5 +112,5 @@ class UsedItemForm(forms.ModelForm):
             'condition': '상품상태',
             'item_type': '상품분류',
             'description': '내용',
-            'image': '이미지'
+
         }

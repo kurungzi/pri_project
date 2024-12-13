@@ -1,0 +1,33 @@
+{% extends 'baseball_matching/base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ seller.user.username }}님과의 대화</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chat-messages" style="height: 400px; overflow-y: auto;">
+                        {% for message in messages %}
+                            <div class="message {% if message.sender == request.user.userprofile %}text-end{% endif %} mb-2">
+                                <div class="message-content p-2 d-inline-block rounded {% if message.sender == request.user.userprofile %}bg-primary text-white{% else %}bg-light{% endif %}">
+                                    {{ message.message }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <form method="post" class="mt-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="message" class="form-control" placeholder="메시지를 입력하세요">
+                            <button type="submit" class="btn btn-primary">전송</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,22 @@
-<!-- templates/baseball_matching/used_item_form.html -->
 {% extends 'baseball_matching/base.html' %}
 {% block content %}
+<style>
+    .radio-inline {
+        display: inline-block;
+        margin-right: 20px;
+    }
+    .radio-inline input[type="radio"] {
+        margin-right: 5px;
+    }
+    .radio-group {
+        margin-top: 10px;
+    }
+    .radio-group > div {
+        display: inline-block;
+        margin-right: 15px;
+    }
+</style>
+
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -12,15 +28,26 @@
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                            <div class="text-danger small">
-                                {{ field.errors }}
+                            <div class="mb-3">
+                                <label class="form-label">{{ field.label }}</label>
+                                {% if field.name == 'condition' or field.name == 'item_type' %}
+                                    <div class="radio-group">
+                                        {% for radio in field %}
+                                            <div class="radio-inline">
+                                                {{ radio.tag }}
+                                                <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        </div>
                         {% endfor %}
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">등록하기</button>
